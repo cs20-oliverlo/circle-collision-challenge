@@ -8,6 +8,7 @@ cnv.height = 550;
 
 // Reset Variables
 let food;
+let foodTimer;
 let player;
 let mouseX;
 let mouseY;
@@ -36,22 +37,19 @@ function animate() {
     // Food Helper Functions
     for (let i = 0; i < food.length; i++) {
         drawCircles(food, i);
+        eatFood(i);
     }
+    spontaneousGeneration();
 
     // Player Helper Functions
     drawCircles(player, 0);
-    playerMovement();
+    if (mouseX !== undefined && mouseY !== undefined) {
+        playerMovement();
+    }
 
     // Request Animation Frame
     requestAnimationFrame(animate);
 }
-
-// function drawFood(n) {
-//     ctx.fillStyle = `rgb(${food[n].r}, ${food[n].g}, ${food[n].b})`;
-//     ctx.beginPath();
-//     ctx.arc(food[n].x, food[n].y, food[n].rad, food[n].startAngle, food[n].endAngle * Math.PI);
-//     ctx.fill();
-// }
 
 function drawCircles(circle, n) {
     if (circle === food) {
@@ -67,23 +65,47 @@ function drawCircles(circle, n) {
         ctx.lineWidth = circle[n].lineWidth;
         ctx.strokeStyle = `${circle[n].ringColor}`;
         ctx.beginPath();
-        ctx.arc(circle[n].x, circle[n].y, circle[n].rad + 1, 0, 2 * Math.PI);
+        ctx.arc(circle[n].x, circle[n].y, circle[n].rad, 0, 2 * Math.PI);
         ctx.stroke();
     }
 }
 
 function playerMovement() {
-    if (mouseX < player[0].x) {
-        player[0].x--;
+    let run = mouseX - player[0].x;
+    let rise = mouseY - player[0].y;
+
+    player[0].x += run / 10;
+    player[0].y += rise / 10;
+
+    if (player[0].x < 0) {
+        player[0].x = 0;
+    } else if (player[0].x > cnv.width) {
+        player[0].x = cnv.width;
     }
-    if (mouseX > player[0].x) {
-        player[0].x++;
+    
+    if (player[0].y < 0) {
+        player[0].y = 0;
+    } else if (player[0].y > cnv.height) {
+        player[0].y = cnv.height;
     }
-    if (mouseY < player[0].y) {
-        player[0].y--;
+}
+
+function eatFood(n) {
+    let run = food[n].x - player[0].x;
+    let rise = food[n].y - player[0].y;
+    let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
+
+    if (d < player[0].rad + food[n].rad) {
+        food.splice(n, 1);
+        player[0].rad += food[n].rad;
     }
-    if (mouseY > player[0].y) {
-        player[0].y++;
+}
+
+function spontaneousGeneration() {
+    foodTimer++;
+    if (foodTimer === 300) {
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)));
+        foodTimer = 0;
     }
 }
 
@@ -117,6 +139,7 @@ function newPlayer(x1, y1, rad1, lineWidth1, startAngle1, endAngle1, xVelocity1,
 
 function reset() {
     food = [];
+    foodTimer = 0;
     for (let i = 0; i < 25; i++) {
         food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)));
     }
