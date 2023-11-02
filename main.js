@@ -37,8 +37,8 @@ function animate() {
     // Food Helper Functions
     for (let i = 0; i < food.length; i++) {
         drawCircles(food, i);
-        eatFood(i);
     }
+    eatFood();
     spontaneousGeneration();
 
     // Player Helper Functions
@@ -52,20 +52,16 @@ function animate() {
 }
 
 function drawCircles(circle, n) {
-    if (circle === food) {
-        ctx.fillStyle = `rgb(${circle[n].r}, ${circle[n].g}, ${circle[n].b})`;
-    } else {
-        ctx.fillStyle = `${circle[n].innerColor}`;
-    }
+    ctx.fillStyle = circle[n].color;
     ctx.beginPath();
-    ctx.arc(circle[n].x, circle[n].y, circle[n].rad, circle[n].startAngle, circle[n].endAngle * Math.PI);
+    ctx.arc(circle[n].x, circle[n].y, circle[n].r, circle[n].startAngle, circle[n].endAngle * Math.PI);
     ctx.fill();
 
     if (circle === player) {
         ctx.lineWidth = circle[n].lineWidth;
         ctx.strokeStyle = `${circle[n].ringColor}`;
         ctx.beginPath();
-        ctx.arc(circle[n].x, circle[n].y, circle[n].rad, 0, 2 * Math.PI);
+        ctx.arc(circle[n].x, circle[n].y, circle[n].r, 0, 2 * Math.PI);
         ctx.stroke();
     }
 }
@@ -90,50 +86,58 @@ function playerMovement() {
     }
 }
 
-function eatFood(n) {
-    let run = food[n].x - player[0].x;
-    let rise = food[n].y - player[0].y;
-    let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
+function eatFood() {
+    for (let i = 0; i < food.length; i++) {
+        let run = food[i].x - player[0].x;
+        let rise = food[i].y - player[0].y;
+        let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
 
-    if (d < player[0].rad + food[n].rad) {
-        food.splice(n, 1);
-        player[0].rad += food[n].rad;
+        if (d < player[0].r + food[i].r) {
+            player[0].r += food[i].r / player[0].r;
+            food.splice(i, 1);
+        }
     }
 }
 
 function spontaneousGeneration() {
     foodTimer++;
     if (foodTimer === 300) {
-        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)));
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
+
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
+
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
+
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
+
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
         foodTimer = 0;
     }
 }
 
-function newFood(x1, y1, rad1, startAngle1, endAngle1, r1, g1, b1) {
+function newFood(x1, y1, r1, startAngle1, endAngle1, color1) {
     return {
             x: x1,
             y: y1,
-            rad: rad1,
+            r: r1,
             startAngle: startAngle1,
             endAngle: endAngle1,
-            r: r1,
-            g: g1,
-            b: b1
+            color: color1
         };
 }
 
-function newPlayer(x1, y1, rad1, lineWidth1, startAngle1, endAngle1, xVelocity1, yVelocity1, ringColor1, innerColor1) {
+function newPlayer(x1, y1, r1, lineWidth1, startAngle1, endAngle1, xVelocity1, yVelocity1, ringColor1, color1) {
     return {
             x: x1,
             y: y1,
-            rad: rad1,
+            r: r1,
             lineWidth: lineWidth1,
             startAngle: startAngle1,
             endAngle: endAngle1,
             xVelocity: xVelocity1,
             yVelocity: yVelocity1,
             ringColor: ringColor1,
-            innerColor: innerColor1
+            color: color1
         }
 }
 
@@ -141,7 +145,7 @@ function reset() {
     food = [];
     foodTimer = 0;
     for (let i = 0; i < 25; i++) {
-        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)));
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
     }
 
     player = [];
