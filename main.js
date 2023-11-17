@@ -26,7 +26,6 @@ function mousemoveHandler(e) {
   mouseY = Math.round(e.clientY - cnvRect.top);
 }
 
-
 // Animation
 requestAnimationFrame(animate);
 function animate() {
@@ -67,11 +66,16 @@ function drawCircles(circle, n) {
 }
 
 function playerMovement() {
-    let run = mouseX - player[0].x;
-    let rise = mouseY - player[0].y;
+    let run1 = mouseX - player[0].x;
+    let rise1 = mouseY - player[0].y;
+    let hyp1 = Math.sqrt(run1 ** 2 + rise1 ** 2);
+    let hyp2 = 125 / player[0].r;
+    let scale = hyp1 / hyp2;
+    let run2 = run1 / scale;
+    let rise2 = rise1 / scale;
 
-    player[0].x += run / 10;
-    player[0].y += rise / 10;
+    player[0].x += run2 / 2.5;
+    player[0].y += rise2 / 2.5;
 
     if (player[0].x < 0) {
         player[0].x = 0;
@@ -83,6 +87,16 @@ function playerMovement() {
         player[0].y = 0;
     } else if (player[0].y > cnv.height) {
         player[0].y = cnv.height;
+    }
+
+    console.log(run2, rise2);
+}
+
+document.addEventListener("keydown", keydownHandler);
+
+function keydownHandler(event) {
+    if (event.code === "KeyW") {
+        start = r;
     }
 }
 
