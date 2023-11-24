@@ -51,47 +51,60 @@ function animate() {
 }
 
 function drawCircles(circle, n) {
-    ctx.fillStyle = circle[n].color;
-    ctx.beginPath();
-    ctx.arc(circle[n].x, circle[n].y, circle[n].r, circle[n].startAngle, circle[n].endAngle * Math.PI);
-    ctx.fill();
-
-    if (circle === player) {
-        ctx.lineWidth = circle[n].lineWidth;
-        ctx.strokeStyle = `${circle[n].ringColor}`;
+    if (circle === food) {
+        ctx.fillStyle = circle[n].color;
         ctx.beginPath();
-        ctx.arc(circle[n].x, circle[n].y, circle[n].r, 0, 2 * Math.PI);
+        ctx.arc(circle[n].x, circle[n].y, circle[n].r, circle[n].startAngle, circle[n].endAngle * Math.PI);
+        ctx.fill();
+    } else {
+        ctx.fillStyle = circle.color;
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r, circle.startAngle, circle.endAngle * Math.PI);
+        ctx.fill();
+
+        ctx.lineWidth = circle.lineWidth;
+        ctx.strokeStyle = `${circle.ringColor}`;
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r, 0, 2 * Math.PI);
         ctx.stroke();
     }
 }
 
 function playerMovement() {
-    let run1 = mouseX - player[0].x;
-    let rise1 = mouseY - player[0].y;
-    let hyp1 = Math.sqrt(run1 ** 2 + rise1 ** 2);
-    let hyp2 = 125 / player[0].r;
-    let scale = hyp1 / hyp2;
-    let run2 = run1 / scale;
-    let rise2 = rise1 / scale;
+    // let run1 = mouseX - player.x;
+    // let rise1 = mouseY - player.y;
+    // let hyp1 = Math.sqrt(run1 ** 2 + rise1 ** 2);
+    // let hyp2 = 125 / player.r;
+    // let scale = hyp1 / hyp2;
+    // let run2 = run1 / scale;
+    // let rise2 = rise1 / scale;
 
-    player[0].x += run2 / 2.5;
-    player[0].y += rise2 / 2.5;
+    // let run = (mouseX - player.x) / (Math.sqrt((mouseX - player.x) ** 2 + (mouseY - player.y) ** 2) / (125 / player.r));
+    // let rise = (mouseY - player.y) / (Math.sqrt((mouseX - player.x) ** 2 + (mouseY - player.y) ** 2) / (125 / player.r));
 
-    if (player[0].x < 0) {
-        player[0].x = 0;
-    } else if (player[0].x > cnv.width) {
-        player[0].x = cnv.width;
+    // player.x += run / 2.5;
+    // player.y += rise / 2.5;
+
+    player.x += (mouseX - player.x) / 10;
+    player.y += (mouseY - player.y) / 10;
+
+    if (player.x < 0) {
+        player.x = 0;
+    } else if (player.x > cnv.width) {
+        player.x = cnv.width;
     }
     
-    if (player[0].y < 0) {
-        player[0].y = 0;
-    } else if (player[0].y > cnv.height) {
-        player[0].y = cnv.height;
+    if (player.y < 0) {
+        player.y = 0;
+    } else if (player.y > cnv.height) {
+        player.y = cnv.height;
     }
 
-    console.log(run2, rise2);
+    // console.log(run2, rise2);
+    console.log((mouseX - player.x) / 10, (mouseY - player.y) / 10);
 }
 
+// Pause Console via Error
 document.addEventListener("keydown", keydownHandler);
 
 function keydownHandler(event) {
@@ -102,12 +115,12 @@ function keydownHandler(event) {
 
 function eatFood() {
     for (let i = 0; i < food.length; i++) {
-        let run = food[i].x - player[0].x;
-        let rise = food[i].y - player[0].y;
+        let run = food[i].x - player.x;
+        let rise = food[i].y - player.y;
         let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
 
-        if (d < player[0].r + food[i].r) {
-            player[0].r += food[i].r / player[0].r;
+        if (d < player.r + food[i].r) {
+            player.r += food[i].r / 8;
             food.splice(i, 1);
         }
     }
@@ -132,21 +145,6 @@ function newFood(x1, y1, r1, startAngle1, endAngle1, color1) {
         };
 }
 
-function newPlayer(x1, y1, r1, lineWidth1, startAngle1, endAngle1, xVelocity1, yVelocity1, ringColor1, color1) {
-    return {
-            x: x1,
-            y: y1,
-            r: r1,
-            lineWidth: lineWidth1,
-            startAngle: startAngle1,
-            endAngle: endAngle1,
-            xVelocity: xVelocity1,
-            yVelocity: yVelocity1,
-            ringColor: ringColor1,
-            color: color1
-        }
-}
-
 function reset() {
     food = [];
     foodTimer = 0;
@@ -154,6 +152,16 @@ function reset() {
         food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
     }
 
-    player = [];
-    player.push(newPlayer(cnv.width / 2, cnv.height / 2, 10, 3, 0, 2, randomInt(-5, 5), randomInt(-5, 5), "blue", "rgb(193, 193, 247)"));
+    player = {
+        x: cnv.width / 2,
+        y: cnv.height / 2,
+        r: 10,
+        lineWidth: 3,
+        startAngle: 0,
+        endAngle: 2,
+        xVelocity: randomInt(-5, 5),
+        yVelocity: randomInt(-5, 5),
+        ringColor: "blue",
+        color: "rgb(193, 193, 247)"
+    };
 }
