@@ -146,12 +146,6 @@ function newFood(x1, y1, r1, startAngle1, endAngle1, color1) {
 }
 
 function reset() {
-    food = [];
-    foodTimer = 0;
-    for (let i = 0; i < 25; i++) {
-        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
-    }
-
     player = {
         x: cnv.width / 2,
         y: cnv.height / 2,
@@ -164,4 +158,10 @@ function reset() {
         ringColor: "blue",
         color: "rgb(193, 193, 247)"
     };
+
+    food = [];
+    foodTimer = 0;
+    for (let i = 0; i < 25; i++) {
+        food.push(newFood(randomInt(0, cnv.width), randomInt(0, cnv.height), randomInt(5, 15), 0, 2, `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
+    }
 }
