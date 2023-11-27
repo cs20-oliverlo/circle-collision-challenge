@@ -5,17 +5,9 @@ cnv.width = 800;
 cnv.height = 550;
 
 // EVENT STUFF
-
-// Reset Variables
-let food;
-let foodTimer;
-let player;
 let mouseX;
 let mouseY;
 
-reset();
-
-// Event Stuff
 document.addEventListener("mousemove", mousemoveHandler);
 function mousemoveHandler(e) {
   // Get rectangle info about canvas location
@@ -50,6 +42,13 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// Reset Variables
+let player;
+let food;
+let foodTimer;
+
+reset();
+
 function drawCircles(circle, n) {
     if (circle === food) {
         ctx.fillStyle = circle[n].color;
@@ -71,22 +70,18 @@ function drawCircles(circle, n) {
 }
 
 function playerMovement() {
-    // let run1 = mouseX - player.x;
-    // let rise1 = mouseY - player.y;
-    // let hyp1 = Math.sqrt(run1 ** 2 + rise1 ** 2);
-    // let hyp2 = 125 / player.r;
-    // let scale = hyp1 / hyp2;
-    // let run2 = run1 / scale;
-    // let rise2 = rise1 / scale;
+    let run1 = mouseX - player.x;
+    let rise1 = mouseY - player.y;
+    let hyp1 = Math.sqrt(run1 ** 2 + rise1 ** 2);
+    let hyp2 = 125 / player.r;
+    let scale = hyp1 / hyp2;
+    let run2 = run1 / scale;
+    let rise2 = rise1 / scale;
 
-    // let run = (mouseX - player.x) / (Math.sqrt((mouseX - player.x) ** 2 + (mouseY - player.y) ** 2) / (125 / player.r));
-    // let rise = (mouseY - player.y) / (Math.sqrt((mouseX - player.x) ** 2 + (mouseY - player.y) ** 2) / (125 / player.r));
-
-    // player.x += run / 2.5;
-    // player.y += rise / 2.5;
-
-    player.x += (mouseX - player.x) / 10;
-    player.y += (mouseY - player.y) / 10;
+    if (scale * player.r > player.r) {
+        player.x += run2 / 5;
+        player.y += rise2 / 5;
+    }
 
     if (player.x < 0) {
         player.x = 0;
@@ -99,9 +94,6 @@ function playerMovement() {
     } else if (player.y > cnv.height) {
         player.y = cnv.height;
     }
-
-    // console.log(run2, rise2);
-    console.log((mouseX - player.x) / 10, (mouseY - player.y) / 10);
 }
 
 // Pause Console via Error
@@ -117,7 +109,7 @@ function eatFood() {
     for (let i = 0; i < food.length; i++) {
         let run = food[i].x - player.x;
         let rise = food[i].y - player.y;
-        let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
+        let d = Math.sqrt(run ** 2 + rise ** 2);
 
         if (d < player.r + food[i].r) {
             player.r += food[i].r / 8;
