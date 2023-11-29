@@ -78,9 +78,9 @@ function playerMovement() {
     let run2 = run1 / scale;
     let rise2 = rise1 / scale;
 
-    if (scale * player.r > player.r) {
-        player.x += run2 / 5;
-        player.y += rise2 / 5;
+    if (hyp1 > 2.5) {
+        player.x += run2 / 2.5;
+        player.y += rise2 / 2.5;
     }
 
     if (player.x < 0) {
@@ -93,15 +93,6 @@ function playerMovement() {
         player.y = 0;
     } else if (player.y > cnv.height) {
         player.y = cnv.height;
-    }
-}
-
-// Pause Console via Error
-document.addEventListener("keydown", keydownHandler);
-
-function keydownHandler(event) {
-    if (event.code === "KeyW") {
-        start = r;
     }
 }
 
